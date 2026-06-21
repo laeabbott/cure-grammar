@@ -1,0 +1,16 @@
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+.claude/
+
+# Large Tatoeba raw downloads (run `npm run fetch` to regenerate)
+data/*.tsv
+data/*.bz2
+data/tatoeba_filtered.json
+
+# Raw source data — not needed for deployment
+src/
+
+# Cure Dolly reference scripts (local reference copy, not part of the app)
+cure-script-main/

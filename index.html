@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <title>Cure Grammar — Japanese Production Drill</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ─── Settings Screen ─────────────────────────────────────────────────── -->
+<div id="screen-settings" class="screen active">
+  <header class="app-header">
+    <h1>Cure Grammar</h1>
+    <p class="subtitle">Japanese sentence production drill</p>
+  </header>
+
+  <main class="settings-form">
+    <section class="setting-group">
+      <h2>Grammar Points</h2>
+      <p class="hint">What constructions do you want to drill?</p>
+      <div class="chip-grid" id="gp-chips">
+        <label class="chip">
+          <input type="checkbox" name="gp" value="receptive" checked>
+          <span>Receptive (られる)</span>
+        </label>
+        <label class="chip">
+          <input type="checkbox" name="gp" value="causative" checked>
+          <span>Causative (させる)</span>
+        </label>
+        <label class="chip">
+          <input type="checkbox" name="gp" value="causative_receptive" checked>
+          <span>Causative-receptive</span>
+        </label>
+        <label class="chip">
+          <input type="checkbox" name="gp" value="ageru" checked>
+          <span>あげる</span>
+        </label>
+        <label class="chip">
+          <input type="checkbox" name="gp" value="kureru" checked>
+          <span>くれる</span>
+        </label>
+        <label class="chip">
+          <input type="checkbox" name="gp" value="morau" checked>
+          <span>もらう</span>
+        </label>
+      </div>
+      <label class="chip chip-all">
+        <input type="checkbox" id="gp-all" checked>
+        <span>All grammar points</span>
+      </label>
+    </section>
+
+    <section class="setting-group">
+      <h2>JLPT Level</h2>
+      <p class="hint">Which levels to include?</p>
+      <div class="chip-grid">
+        <label class="chip"><input type="checkbox" name="jlpt" value="N5" checked><span>N5</span></label>
+        <label class="chip"><input type="checkbox" name="jlpt" value="N4" checked><span>N4</span></label>
+        <label class="chip"><input type="checkbox" name="jlpt" value="N3" checked><span>N3</span></label>
+        <label class="chip"><input type="checkbox" name="jlpt" value="N2" checked><span>N2</span></label>
+        <label class="chip"><input type="checkbox" name="jlpt" value="N1" checked><span>N1</span></label>
+      </div>
+      <label class="chip chip-all">
+        <input type="checkbox" id="jlpt-all" checked>
+        <span>All levels</span>
+      </label>
+    </section>
+
+    <section class="setting-group">
+      <h2>Session Length</h2>
+      <div class="radio-grid">
+        <label class="radio-opt"><input type="radio" name="count" value="5"><span>5</span></label>
+        <label class="radio-opt active"><input type="radio" name="count" value="10" checked><span>10</span></label>
+        <label class="radio-opt"><input type="radio" name="count" value="20"><span>20</span></label>
+        <label class="radio-opt"><input type="radio" name="count" value="50"><span>50</span></label>
+        <label class="radio-opt radio-all"><input type="radio" name="count" value="all"><span>All</span></label>
+      </div>
+    </section>
+
+    <div class="settings-footer">
+      <p id="sentence-count-info" class="count-info"></p>
+      <button id="btn-start" class="btn-primary">Start Drill</button>
+    </div>
+  </main>
+</div>
+
+<!-- ─── Drill Screen ─────────────────────────────────────────────────────── -->
+<div id="screen-drill" class="screen">
+  <header class="drill-header">
+    <button id="btn-quit" class="btn-icon" aria-label="Quit session">✕</button>
+    <div class="progress-wrap">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <span id="progress-label" class="progress-label">1 / 10</span>
+  </header>
+
+  <main class="drill-main">
+    <div class="sentence-display">
+      <div class="gp-badges" id="drill-gp-badges"></div>
+
+      <div class="natural-english" id="drill-natural-en">
+        <!-- word spans inserted by JS for hover/tap -->
+      </div>
+
+      <div class="gloss-block">
+        <span class="gloss-label">Cure Dolly gloss</span>
+        <div class="gloss-text" id="drill-gloss"></div>
+      </div>
+
+      <details class="vocab-accordion" id="drill-vocab-accordion">
+        <summary>Vocabulary</summary>
+        <div id="drill-vocab-list" class="vocab-list"></div>
+      </details>
+    </div>
+
+    <div class="input-block">
+      <div class="input-wrapper">
+        <textarea
+          id="answer-input"
+          class="answer-input"
+          placeholder="Type the Japanese sentence here…"
+          rows="3"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          inputmode="text"
+        ></textarea>
+      </div>
+      <button id="btn-submit" class="btn-primary">Check</button>
+    </div>
+  </main>
+
+</div>
+
+<!-- ─── Result Screen ────────────────────────────────────────────────────── -->
+<div id="screen-result" class="screen">
+  <header class="drill-header">
+    <button id="btn-result-quit" class="btn-icon" aria-label="Quit session">✕</button>
+    <div class="progress-wrap">
+      <div id="result-progress-bar" class="progress-bar"></div>
+    </div>
+    <span id="result-progress-label" class="progress-label"></span>
+  </header>
+
+  <main class="result-main">
+    <div id="result-verdict" class="verdict"></div>
+
+    <div class="result-sentences">
+      <div class="result-row">
+        <span class="result-label">Your answer</span>
+        <div id="result-user-answer" class="result-text user-answer-text"></div>
+      </div>
+      <div id="result-correct-row" class="result-row correct-row hidden">
+        <span class="result-label">Correct answer</span>
+        <div id="result-correct" class="result-text correct-text"></div>
+      </div>
+    </div>
+
+    <div id="result-error-hint" class="result-error-hint" hidden></div>
+
+    <div class="breakdown-block">
+      <div class="breakdown-label">Reminders</div>
+      <div id="result-breakdown" class="breakdown-text"></div>
+    </div>
+
+    <div class="result-actions">
+      <button id="btn-next" class="btn-primary">Next →</button>
+    </div>
+  </main>
+</div>
+
+<!-- ─── Summary Screen ───────────────────────────────────────────────────── -->
+<div id="screen-summary" class="screen">
+  <main class="summary-main">
+    <h2>Session Complete</h2>
+
+    <div class="score-display">
+      <div class="score-number" id="summary-score"></div>
+      <div class="score-label" id="summary-score-label"></div>
+    </div>
+
+    <div id="summary-breakdown" class="summary-breakdown"></div>
+
+    <div id="summary-missed" class="summary-missed hidden">
+      <h3>Review these</h3>
+      <div id="summary-missed-list" class="missed-list"></div>
+    </div>
+
+    <div class="summary-actions">
+      <button id="btn-restart" class="btn-primary">New Session</button>
+      <button id="btn-retry-missed" class="btn-secondary hidden" aria-label="Drill missed sentences again">Retry Missed</button>
+    </div>
+  </main>
+</div>
+
+<!-- ─── Loading Screen ───────────────────────────────────────────────────── -->
+<div id="screen-loading" class="screen active">
+  <main class="loading-main">
+    <div class="spinner"></div>
+    <p>Loading sentence bank…</p>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

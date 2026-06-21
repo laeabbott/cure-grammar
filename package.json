@@ -1,0 +1,17 @@
+{
+  "name": "cure-grammar",
+  "version": "1.0.0",
+  "description": "Cure Dolly-style Japanese sentence production drill app",
+  "private": true,
+  "scripts": {
+    "fetch": "python scripts/fetch_tatoeba.py",
+    "curate": "python scripts/curate_sentences.py",
+    "generate": "python scripts/generate_content.py",
+    "readings": "node scripts/generate_readings.js",
+    "build": "npm run fetch && npm run curate && npm run generate && npm run readings",
+    "build:fast": "npm run curate && npm run generate && npm run readings"
+  },
+  "dependencies": {
+    "kuromoji": "^0.1.2"
+  }
+}
