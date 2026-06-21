@@ -165,6 +165,8 @@ function toHiragana(str) {
 
 // Grammatical particles only — sentence-final (よ、ね、ぞ、わ etc.) excluded
 // to avoid false positives when user omits or varies tone particles
+const WORKER_URL = "https://cure-grammar-proxy.im-b5f.workers.dev";
+
 const PARTICLE_RE = /[はがをにでとものへ]|から|まで|より/g;
 
 function extractParticles(str) {
@@ -473,6 +475,20 @@ function showResult(entry, userAnswer, result) {
     hintEl.hidden = true;
   }
 
+  // Explain button — only on wrong answers
+  const explainContainer = $("result-explain-container");
+  const explainText = $("result-explain-text");
+  if (isCorrect) {
+    explainContainer.hidden = true;
+  } else {
+    explainContainer.hidden = false;
+    explainText.hidden = true;
+    explainText.textContent = "";
+    $("btn-explain").disabled = false;
+    $("btn-explain").textContent = "Explain this mistake";
+    $("btn-explain").onclick = () => explainMistake(entry, userAnswer, result);
+  }
+
   // Reminders
   const bdEl = $("result-breakdown");
   const breakdown = entry.answer_breakdown || "";
@@ -496,6 +512,47 @@ function showResult(entry, userAnswer, result) {
   $("btn-next").textContent = isLast ? "View Results" : "Next →";
 
   showScreen("result");
+}
+
+async function explainMistake(entry, userAnswer, result) {
+  const btn = $("btn-explain");
+  const el = $("result-explain-text");
+
+  btn.disabled = true;
+  btn.textContent = "Thinking…";
+  el.hidden = false;
+  el.textContent = "";
+
+  const errorType = result.reason === "particle_error"
+    ? "particle/marker error"
+    : "vocabulary or content mismatch";
+
+  const prompt = `The student was asked to translate this into Japanese:
+"${entry.natural_english}"
+
+Correct answer: ${entry.japanese}
+Student's answer: ${userAnswer || "(no answer)"}
+Error type: ${errorType}
+Grammar points: ${(entry.grammar_points || []).join(", ")}
+Cure Dolly gloss: ${entry.cure_dolly_gloss || ""}
+
+Explain in 2–3 sentences exactly what went wrong and why, using Cure Dolly's framework.`;
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
+    });
+    const data = await res.json();
+    el.textContent = data.content?.[0]?.text
+      || "Sorry, couldn't generate an explanation.";
+  } catch {
+    el.textContent = "Couldn't reach the explanation service — check your connection.";
+  }
+
+  btn.textContent = "Explain this mistake";
+  btn.disabled = false;
 }
 
 function randomPraise() {

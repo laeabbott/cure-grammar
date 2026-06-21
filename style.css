@@ -438,6 +438,38 @@ html, body {
   line-height: 1.5;
 }
 
+.btn-explain {
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  margin-bottom: 12px;
+}
+.btn-explain:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn-explain:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.result-explain-text {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.65;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+
 .breakdown-block {
   background: var(--surface2);
   border: 1px solid var(--border);
