@@ -491,6 +491,17 @@ function showResult(entry, userAnswer, result) {
 
   // Reminders
   const bdEl = $("result-breakdown");
+  bdEl.innerHTML = "";
+
+  // Cure Dolly gloss
+  if (entry.cure_dolly_gloss) {
+    const gloss = document.createElement("p");
+    gloss.className = "result-gloss";
+    gloss.textContent = entry.cure_dolly_gloss;
+    bdEl.appendChild(gloss);
+  }
+
+  // Bullet-point breakdown
   const breakdown = entry.answer_breakdown || "";
   if (breakdown) {
     const sentences = breakdown.split(". ").filter(s => s.trim());
@@ -501,10 +512,9 @@ function showResult(entry, userAnswer, result) {
       li.textContent = s.endsWith(".") || s.endsWith("。") ? s : s + ".";
       ul.appendChild(li);
     }
-    bdEl.innerHTML = "";
     bdEl.appendChild(ul);
   } else {
-    bdEl.innerHTML = "";
+    // keep bdEl cleared — gloss alone is fine
   }
 
   // Next button label

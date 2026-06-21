@@ -489,6 +489,14 @@ html, body {
   color: var(--text-dim);
   line-height: 1.65;
 }
+.result-gloss {
+  font-size: 0.9rem;
+  color: var(--text);
+  font-style: italic;
+  margin: 0 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
 .breakdown-list {
   margin: 0;
   padding-left: 1.1em;
